@@ -3,6 +3,11 @@ using System.Collections.Generic;
 
 public class GridManager : MonoBehaviour
 {
+	public static GridManager Instance
+	{
+		get { return _instance; }
+	}
+	private static GridManager _instance = null;
 	//following public variable is used to store the hex model prefab;
     //instantiate it by dragging the prefab on this variable using unity editor
     public GameObject Hex;
@@ -13,7 +18,12 @@ public class GridManager : MonoBehaviour
 	 //Hexagon tile width and height in game world
     private float hexWidth;
     private float hexHeight;
-	
+
+	private Transform currentHoverHex = null;
+
+	public Transform CurrentSelectedHex { get { return currentSelectedHex; } }
+	private Transform currentSelectedHex = null;
+
 	//Method to initialise Hexagon width and height
     void setSizes()
     {
@@ -51,14 +61,14 @@ public class GridManager : MonoBehaviour
     }
 	
 	//Finally the method which initialises and positions all the tiles
-	void createGrid(Dictionary<Vector3, HexTile> hexGridInfo = null)
+	void createGrid(Dictionary<Vector3, int> hexGridInfo)
     {
         //Game object which is the parent of all the hex tiles
         GameObject hexGridGO = new GameObject("HexGrid");
 
 		if(hexGridInfo == null)
 		{
-			hexGridInfo = new Dictionary<Vector3, HexTile>();
+			hexGridInfo = new Dictionary<Vector3, int>();
 	        for (float y = 0; y < gridHeightInHexes; y++)
 	        {
 	            for (float x = 0; x < gridWidthInHexes; x++)
@@ -66,28 +76,36 @@ public class GridManager : MonoBehaviour
 	                //GameObject assigned to Hex public variable is cloned
 	                //Current position in grid
 	                Vector2 gridPos = new Vector2(x, y);
-					hexGridInfo.Add(calcWorldCoord(gridPos), null);
+					hexGridInfo.Add(calcWorldCoord(gridPos), -1);
 	            }
 	        }
 		}
 
-		foreach(KeyValuePair<Vector3, HexTile> newHexInfo in hexGridInfo)
+		foreach(KeyValuePair<Vector3, int> newHexInfo in hexGridInfo)
 		{
         	GameObject hex = (GameObject)Instantiate(Hex);
 			hex.transform.position = newHexInfo.Key;
 			hex.transform.parent = hexGridGO.transform;
-			if(newHexInfo.Value != null)
-				((HexTile)hex.GetComponent(typeof(HexTile))).SetTileType(newHexInfo.Value.tileType);
+			if(newHexInfo.Value != -1)
+				((HexTile)hex.GetComponent(typeof(HexTile))).SetTileType((HexTile.TileType)newHexInfo.Value);
 		}
     }
 
     //The grid should be generated on game start
     void Start()
     {
+		if(_instance == null)
+			_instance = this;
 		RecreateWorld();
     }
 
-	public void RecreateWorld(Dictionary<Vector3, HexTile> hexGridInfo = null)
+
+	public void RecreateWorld()
+	{
+		RecreateWorld(null);
+	}
+
+	public void RecreateWorld(Dictionary<Vector3, int> hexGridInfo)
 	{
 		GameObject HexGrid = GameObject.Find("HexGrid");
 		if(HexGrid != null)
@@ -95,5 +113,41 @@ public class GridManager : MonoBehaviour
 
 		setSizes();
 		createGrid(hexGridInfo);
+	}
+
+	public void HoverHex(Transform hoverHex)
+	{
+		if(hoverHex != currentHoverHex)
+		{
+			if(currentHoverHex != null && currentHoverHex != currentSelectedHex)
+			{
+				ResetHexColors(currentHoverHex);
+			}
+			hoverHex.renderer.material.SetColor("_Color", Color.white);
+			currentHoverHex = hoverHex;
+		}
+	}
+
+	public void SelectHex(Transform selectedHex)
+	{
+		if(currentSelectedHex != selectedHex)
+		{
+			if(currentSelectedHex != null)
+				ResetHexColors(currentSelectedHex);
+			currentSelectedHex = selectedHex;
+		}
+	}
+
+	public void DeselectHex()
+	{
+		if(currentSelectedHex != null)
+			ResetHexColors(currentSelectedHex);
+		currentSelectedHex = null;
+	}
+
+	private void ResetHexColors(Transform t)
+	{
+		HexTile ht = (HexTile)t.GetComponent(typeof(HexTile));
+		ht.SetTileType(ht.tileType);
 	}
 }

@@ -28,16 +28,14 @@ public class GameManager : MonoBehaviour
 		try
 		{
 			GridManager gm = GameObject.Find("GridManager").GetComponent(typeof(GridManager)) as GridManager;
-			Dictionary<Vector3, HexTile> hexes = new Dictionary<Vector3, HexTile>();
+			Dictionary<Vector3, int> hexes = new Dictionary<Vector3, int>();
 			HexTile tempHex = null;
 
 			foreach(string s in File.ReadAllLines(filePath))
 			{
 				if(s.Contains(";"))
 				{
-					tempHex = new HexTile();
-					tempHex.tileType = (HexTile.TileType)int.Parse(s.Substring(s.IndexOf(";") + 1));
-					hexes.Add(stringToVector3(s.Substring(0, s.IndexOf(";"))), tempHex);
+					hexes.Add(stringToVector3(s.Substring(0, s.IndexOf(";"))), int.Parse(s.Substring(s.IndexOf(";") + 1)));
 				}
 				else
 				{

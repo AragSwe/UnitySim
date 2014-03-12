@@ -51,9 +51,19 @@ public class Menus : MonoBehaviour
 		default:
 			break;
 		}
+
+		if(GridManager.Instance.CurrentSelectedHex != null)
+		{
+			ShowHexInfo((HexTile)GridManager.Instance.CurrentSelectedHex.GetComponent(typeof(HexTile)));
+		}
 	}
 
-	public void ToggleMainMenu(bool forceShow = false)
+	public void ToggleMainMenu()
+	{
+		ToggleMainMenu(false);
+	}
+
+	public void ToggleMainMenu(bool forceShow)
 	{
 		if(_activeMenu != Menu.None && forceShow == false)
 			CloseAllMenus();
@@ -68,8 +78,7 @@ public class Menus : MonoBehaviour
 		GUI.BeginGroup(CreateCenterRect(100, 200));
 		if(GUI.Button(new Rect(0, 0, 80, 20), "New Game"))
 		{
-			GridManager gm = (GridManager)GameObject.Find("GridManager").GetComponent("GridManager");
-			gm.RecreateWorld();
+			GridManager.Instance.RecreateWorld();
 			CloseAllMenus();
 		}
 		if(GUI.Button(new Rect(0, 25, 80, 20), "Save"))
@@ -115,7 +124,7 @@ public class Menus : MonoBehaviour
 	{
 		try
 		{
-			GridManager gm = (GridManager)GameObject.Find("GridManager").GetComponent(typeof(GridManager));
+			GridManager gm = GridManager.Instance;
 			Transform HexGrid = GameObject.Find("HexGrid").transform;
 			using(StreamWriter sw = new StreamWriter(GetApplicationPath() + SAVEFILEFOLDER + saveGameName, false))
 			{
@@ -153,6 +162,15 @@ public class Menus : MonoBehaviour
 			if(GUI.Button(new Rect(0, buttonTop, 80, buttonHeight), Path.GetFileName(filePath)))
 				GameManager.Instance.LoadGame(filePath);
 		}
+
+		GUI.EndGroup();
+	}
+
+	void ShowHexInfo (HexTile currentSelectedHex)
+	{
+		GUI.BeginGroup(new Rect(Screen.width - 305, 20, 300, 500));
+
+		GUI.Label(new Rect(0, 0, 300, 20), "Type: " + currentSelectedHex.tileType);
 
 		GUI.EndGroup();
 	}
