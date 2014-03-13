@@ -35,17 +35,4 @@ public class InputHandler : MonoBehaviour
 			}
 		}
 	}
-
-	void OnGUI()
-	{
-		if(Event.current.type == EventType.Repaint && 
-		   GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition ))
-		{
-			isMouseOverGUI = true;
-		}
-		else
-		{
-			isMouseOverGUI = false;
-		}
-	}
 }
