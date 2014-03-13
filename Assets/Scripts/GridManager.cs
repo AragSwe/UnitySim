@@ -123,7 +123,8 @@ public class GridManager : MonoBehaviour
 			{
 				ResetHexColors(currentHoverHex);
 			}
-			hoverHex.renderer.material.SetColor("_Color", Color.white);
+			if(hoverHex != null)
+				hoverHex.renderer.material.SetColor("_Color", Color.white);
 			currentHoverHex = hoverHex;
 		}
 	}

@@ -21,7 +21,9 @@ public class InputHandler : MonoBehaviour
 				Menus.Instance.ToggleMainMenu();
 		}
 
-		if(isMouseOverGUI == false)
+		if(Menus.Instance.IsMouseOverGUI)
+				GridManager.Instance.HoverHex(null);
+		else
 		{
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hitInfo;

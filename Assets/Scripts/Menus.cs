@@ -26,8 +26,8 @@ public class Menus : MonoBehaviour
 	private string[] saveFilesList = new string[]{};
 	private string saveGameFileName = "";
 
-	public bool IsMouseOverGUI { get { return isMouseOverGUI; } }
-	private bool isMouseOverGUI = false;
+	public bool IsMouseOverGUI { get { return lastToolTip != ""; } }
+	private string lastToolTip = "";
 
 	void Start()
 	{
@@ -39,6 +39,7 @@ public class Menus : MonoBehaviour
 
 	void OnGUI()
 	{
+		//lastToolTip = "";
 		switch(_activeMenu)
 		{
 		case Menu.Main:
@@ -58,6 +59,9 @@ public class Menus : MonoBehaviour
 		{
 			ShowHexInfo((HexTile)GridManager.Instance.CurrentSelectedHex.GetComponent(typeof(HexTile)));
 		}
+
+		if(Input.GetMouseButtonDown(0) == false)
+			lastToolTip = GUI.tooltip;
 	}
 
 	public void ToggleMainMenu()
@@ -78,16 +82,16 @@ public class Menus : MonoBehaviour
 	void ShowMainMenu ()
 	{
 		GUI.BeginGroup(CreateCenterRect(100, 200));
-		if(GUI.Button(new Rect(0, 0, 80, 20), "New Game"))
+		if(CreateButton(new Rect(0, 0, 80, 20), "New Game"))
 		{
 			GridManager.Instance.RecreateWorld();
 			CloseAllMenus();
 		}
-		if(GUI.Button(new Rect(0, 25, 80, 20), "Save"))
+		if(CreateButton(new Rect(0, 25, 80, 20), "Save"))
 			ToggleSaveGameMenu();
-		if(GUI.Button(new Rect(0, 50, 80, 20), "Load"))
+		if(CreateButton(new Rect(0, 50, 80, 20), "Load"))
 			ToggleLoadGameMenu();
-		if(GUI.Button(new Rect(0, 75, 80, 20), "Exit"))
+		if(CreateButton(new Rect(0, 75, 80, 20), "Exit"))
 			Application.Quit();
 		GUI.EndGroup();
 	}
@@ -117,7 +121,7 @@ public class Menus : MonoBehaviour
 
 		GUI.Label(new Rect(0, 0, 200, 20), "Enter save name:");
 		saveGameFileName = GUI.TextField(new Rect(0, 25, 200, 20), saveGameFileName);
-		if(GUI.Button(new Rect(0, 50, 80, 20), "Save") && isMouseOverGUI)
+		if(CreateButton(new Rect(0, 50, 80, 20), "Save"))
 		{
 			GameManager.Instance.SaveGame(saveGameFileName);
 			CloseAllMenus();
@@ -137,7 +141,7 @@ public class Menus : MonoBehaviour
 		foreach(string filePath in saveFilesList)
 		{
 			buttonTop += buttonHeight + 5;
-			if(GUI.Button(new Rect(0, buttonTop, 80, buttonHeight), Path.GetFileName(filePath)))
+			if(CreateButton(new Rect(0, buttonTop, 80, buttonHeight), Path.GetFileName(filePath)))
 			{
 				GameManager.Instance.LoadGame(filePath);
 				CloseAllMenus();
@@ -156,8 +160,11 @@ public class Menus : MonoBehaviour
 		int top = 25;
 		foreach(IAction action in currentSelectedHex.Actions)
 		{
-			if(GUI.Button(new Rect(0, top, 80, 20), action.ActionName))
+			if(CreateButton(new Rect(0, top, 80, 20), action.ActionName))
+			{
 				action.Execute(currentSelectedHex);
+				Debug.Log(lastToolTip);
+			}
 			top += 25;
 		}
 		GUI.EndGroup();
@@ -177,5 +184,10 @@ public class Menus : MonoBehaviour
 	void CloseAllMenus ()
 	{
 		_activeMenu = Menu.None;
+	}
+
+	bool CreateButton(Rect rect, string text)
+	{
+		return GUI.Button(rect, new GUIContent(text, "aa"));
 	}
 }
