@@ -61,14 +61,14 @@ public class GridManager : MonoBehaviour
     }
 	
 	//Finally the method which initialises and positions all the tiles
-	void createGrid(Dictionary<Vector3, int> hexGridInfo)
+	void createGrid(Dictionary<Vector3, string> hexGridInfo)
     {
         //Game object which is the parent of all the hex tiles
         GameObject hexGridGO = new GameObject("HexGrid");
 
 		if(hexGridInfo == null)
 		{
-			hexGridInfo = new Dictionary<Vector3, int>();
+			hexGridInfo = new Dictionary<Vector3, string>();
 	        for (float y = 0; y < gridHeightInHexes; y++)
 	        {
 	            for (float x = 0; x < gridWidthInHexes; x++)
@@ -76,18 +76,18 @@ public class GridManager : MonoBehaviour
 	                //GameObject assigned to Hex public variable is cloned
 	                //Current position in grid
 	                Vector2 gridPos = new Vector2(x, y);
-					hexGridInfo.Add(calcWorldCoord(gridPos), -1);
+					hexGridInfo.Add(calcWorldCoord(gridPos), "");
 	            }
 	        }
 		}
 
-		foreach(KeyValuePair<Vector3, int> newHexInfo in hexGridInfo)
+		foreach(KeyValuePair<Vector3, string> newHexInfo in hexGridInfo)
 		{
         	GameObject hex = (GameObject)Instantiate(Hex);
 			hex.transform.position = newHexInfo.Key;
 			hex.transform.parent = hexGridGO.transform;
-			if(newHexInfo.Value != -1)
-				((HexTile)hex.GetComponent(typeof(HexTile))).SetTileType((HexTile.TileType)newHexInfo.Value);
+			if(newHexInfo.Value != "")
+				((HexTile)hex.GetComponent(typeof(HexTile))).SetTileType(newHexInfo.Value);
 		}
     }
 
@@ -105,7 +105,7 @@ public class GridManager : MonoBehaviour
 		RecreateWorld(null);
 	}
 
-	public void RecreateWorld(Dictionary<Vector3, int> hexGridInfo)
+	public void RecreateWorld(Dictionary<Vector3, string> hexGridInfo)
 	{
 		GameObject HexGrid = GameObject.Find("HexGrid");
 		if(HexGrid != null)
@@ -149,6 +149,6 @@ public class GridManager : MonoBehaviour
 	private void ResetHexColors(Transform t)
 	{
 		HexTile ht = (HexTile)t.GetComponent(typeof(HexTile));
-		ht.SetTileType(ht.tileType);
+		ht.SetTileType(ht.terrainType.UniqueName);
 	}
 }

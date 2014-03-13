@@ -32,14 +32,14 @@ public class GameManager : MonoBehaviour
 		try
 		{
 			GridManager gm = GameObject.Find("GridManager").GetComponent(typeof(GridManager)) as GridManager;
-			Dictionary<Vector3, int> hexes = new Dictionary<Vector3, int>();
+			Dictionary<Vector3, string> hexes = new Dictionary<Vector3, string>();
 			HexTile tempHex = null;
 
 			foreach(string s in File.ReadAllLines(filePath))
 			{
 				if(s.Contains(";"))
 				{
-					hexes.Add(stringToVector3(s.Substring(0, s.IndexOf(";"))), int.Parse(s.Substring(s.IndexOf(";") + 1)));
+					hexes.Add(stringToVector3(s.Substring(0, s.IndexOf(";"))), s.Substring(s.IndexOf(";") + 1));
 				}
 				else
 				{
@@ -71,7 +71,7 @@ public class GameManager : MonoBehaviour
 				{
 					child = HexGrid.GetChild(i);
 					tileInfo = (HexTile)child.GetComponent(typeof(HexTile));
-					sw.WriteLine("{0};{1}", child.position, (int)tileInfo.tileType);
+					sw.WriteLine("{0};{1}", child.position, tileInfo.terrainType.UniqueName);
 				}
 			}
 		}

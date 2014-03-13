@@ -1,26 +1,10 @@
 ﻿using UnityEngine;
+using System.Linq;
 using System.Collections.Generic;
 
 public class HexTile : MonoBehaviour
 {
-	public enum TileType
-	{
-		None,
-		Plains,
-		Woods,
-		Mountain,
-		Water
-	}
-
-	public enum ResourceType
-	{
-		Wood,
-		Stone,
-		Water,
-		Grain
-	}
-	
-	public TileType tileType;
+	public TerrainType terrainType;
 	public IList<IAction> Actions
 	{
 		get { return GetActions(); }
@@ -28,8 +12,8 @@ public class HexTile : MonoBehaviour
 	
 	// Use this for initialization
 	void Start () {
-		if(tileType == TileType.None)
-			SetTileType((TileType)Random.Range(1, 4));
+		if(terrainType == null)
+			SetTileType(Utility.RandomValue(ConfigurationManager.Instance.TerrainTypes).UniqueName);
 	}
 	
 	// Update is called once per frame
@@ -37,17 +21,17 @@ public class HexTile : MonoBehaviour
 	
 	}
 
-	public void SetTileType(HexTile.TileType newType)
+	public void SetTileType(string newType)
 	{
-		tileType = newType;
+		terrainType = ConfigurationManager.Instance.TerrainTypes[newType];
 		
 		Color c = Color.black;
-		switch(tileType)
+		switch(newType)
 		{
-		case TileType.Mountain: c = Color.grey; break;
-		case TileType.Plains: c = Color.green; break;
-		case TileType.Woods: c = Color.green; break;
-		case TileType.Water: c = Color.blue; break;
+		case "mountain": c = Color.grey; break;
+		case "plains": c = Color.green; break;
+		case "woods": c = Color.yellow; break;
+		case "water": c = Color.blue; break;
 		}
 		renderer.material.SetColor("_Color", c);
 	}
@@ -57,8 +41,11 @@ public class HexTile : MonoBehaviour
 		return new List<IAction> { new StakeClaim() };
 	}
 
-	IDictionary<ResourceType, int> GenerateResources()
+	IDictionary<ResourceType, float> GenerateResources()
 	{
-		return new Dictionary<ResourceType, int>();
+		Dictionary<ResourceType, float> di = new Dictionary<ResourceType, float>();
+		terrainType.Resources.ForEach( res => di.Add(ConfigurationManager.Instance.ResourceTypes[res.ResourceName], res.BaseModifier));
+
+		return di;
 	}
 }

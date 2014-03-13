@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.IO;
 
@@ -39,7 +39,6 @@ public class Menus : MonoBehaviour
 
 	void OnGUI()
 	{
-		//lastToolTip = "";
 		switch(_activeMenu)
 		{
 		case Menu.Main:
@@ -155,7 +154,7 @@ public class Menus : MonoBehaviour
 	{
 		GUI.BeginGroup(new Rect(Screen.width - 305, 20, 300, 500));
 
-		GUI.Label(new Rect(0, 0, 300, 20), "Type: " + currentSelectedHex.tileType);
+		GUI.Label(new Rect(0, 0, 300, 20), "Type: " + currentSelectedHex.terrainType.FriendlyName);
 
 		int top = 25;
 		foreach(IAction action in currentSelectedHex.Actions)
