@@ -16,6 +16,9 @@ public class GameManager : MonoBehaviour
 	{
 		if(_instance == null)
 			_instance = this;
+
+		if(Directory.Exists(GameManager.GetApplicationPath() + SAVEFILEFOLDER) == false)
+			Directory.CreateDirectory(GameManager.GetApplicationPath() + SAVEFILEFOLDER);
 	}
 	
 	// Update is called once per frame

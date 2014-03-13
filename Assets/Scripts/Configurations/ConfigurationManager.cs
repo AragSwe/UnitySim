@@ -17,6 +17,8 @@ public class ConfigurationManager
 
 	private ConfigurationManager()
 	{
+		if(Directory.Exists(GameManager.GetApplicationPath() + CONFIGURATIONFOLDER) == false)
+			Directory.CreateDirectory(GameManager.GetApplicationPath() + CONFIGURATIONFOLDER);
 		ReloadConfigurations();
 	}
 
