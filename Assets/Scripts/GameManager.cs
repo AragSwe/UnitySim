@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
 		get { return _instance; }
 	}
 	private static GameManager _instance = null;
+	private const string SAVEFILEFOLDER = "/saves/";
+	private string saveGameFileName = "";
 
 	// Use this for initialization
 	void Start ()
@@ -50,6 +52,64 @@ public class GameManager : MonoBehaviour
 		{
 			Debug.LogError("Error loading game: " + ex.Message);
 		}
+	}
+	
+	public void SaveGame (string saveGameName)
+	{
+		try
+		{
+			GridManager gm = GridManager.Instance;
+			Transform HexGrid = GameObject.Find("HexGrid").transform;
+			using(StreamWriter sw = new StreamWriter(GetApplicationPath() + SAVEFILEFOLDER + saveGameName, false))
+			{
+				sw.WriteLine("{0}, {1}", gm.gridWidthInHexes, gm.gridHeightInHexes);
+				Transform child = null;
+				HexTile tileInfo = null;
+				for(int i = 0; i < HexGrid.childCount; i++)
+				{
+					child = HexGrid.GetChild(i);
+					tileInfo = (HexTile)child.GetComponent(typeof(HexTile));
+					sw.WriteLine("{0};{1}", child.position, (int)tileInfo.tileType);
+				}
+			}
+		}
+		catch (IOException ex)
+		{
+			Debug.LogError("Error while saving file: " + ex.Message);
+		}
+	}
+	
+	public static string[] GetSaveFiles()
+	{
+		string saveFileDirectoryPath = GetApplicationPath() + SAVEFILEFOLDER;
+		string[] saveFiles = new string[]{};
+		
+		try
+		{
+			if(Directory.Exists(saveFileDirectoryPath) == false)
+				Directory.CreateDirectory(saveFileDirectoryPath);
+			
+			saveFiles = Directory.GetFiles(saveFileDirectoryPath);
+		}
+		catch (IOException ex)
+		{
+			//Handle error lol
+			Debug.LogError("Error while loading savefiles: " + ex.Message);
+		}
+		
+		return saveFiles;
+	}
+	
+	public static string GetApplicationPath()
+	{
+		string path = Application.dataPath;
+		if (Application.platform == RuntimePlatform.OSXPlayer) {
+			path += "/../../";
+		}
+		else if (Application.platform == RuntimePlatform.WindowsPlayer) {
+			path += "/../";
+		}
+		return path;
 	}
 
 	Vector3 stringToVector3(string s)

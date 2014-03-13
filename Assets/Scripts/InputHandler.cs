@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class InputHandler : MonoBehaviour {
+public class InputHandler : MonoBehaviour
+{
+	private bool isMouseOverGUI = false;
 
 	// Use this for initialization
 	void Start () {
@@ -19,15 +21,31 @@ public class InputHandler : MonoBehaviour {
 				Menus.Instance.ToggleMainMenu();
 		}
 
-		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-		RaycastHit hitInfo;
-		if(Physics.Raycast(ray, out hitInfo, float.MaxValue))
+		if(isMouseOverGUI == false)
 		{
-			GridManager.Instance.HoverHex(hitInfo.transform);
-			if(Input.GetButton("Select"))
+			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+			RaycastHit hitInfo;
+			if(Physics.Raycast(ray, out hitInfo, float.MaxValue))
 			{
-				GridManager.Instance.SelectHex(hitInfo.transform);
+				GridManager.Instance.HoverHex(hitInfo.transform);
+				if(Input.GetButton("Select"))
+				{
+					GridManager.Instance.SelectHex(hitInfo.transform);
+				}
 			}
+		}
+	}
+
+	void OnGUI()
+	{
+		if(Event.current.type == EventType.Repaint && 
+		   GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition ))
+		{
+			isMouseOverGUI = true;
+		}
+		else
+		{
+			isMouseOverGUI = false;
 		}
 	}
 }

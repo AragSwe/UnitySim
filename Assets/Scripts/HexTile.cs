@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class HexTile : MonoBehaviour
 {
@@ -13,6 +13,10 @@ public class HexTile : MonoBehaviour
 	}
 	
 	public TileType tileType;
+	public IList<IAction> Actions
+	{
+		get { return GetActions(); }
+	}
 	
 	// Use this for initialization
 	void Start () {
@@ -38,5 +42,10 @@ public class HexTile : MonoBehaviour
 		case TileType.Water: c = Color.blue; break;
 		}
 		renderer.material.SetColor("_Color", c);
+	}
+
+	IList<IAction> GetActions ()
+	{
+		return new List<IAction> { new StakeClaim() };
 	}
 }

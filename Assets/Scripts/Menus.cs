@@ -24,8 +24,10 @@ public class Menus : MonoBehaviour
 	private Menu _activeMenu = Menu.None;
 	private Rect ScreenCenter;
 	private string[] saveFilesList = new string[]{};
-	private const string SAVEFILEFOLDER = "/saves/";
 	private string saveGameFileName = "";
+
+	public bool IsMouseOverGUI { get { return isMouseOverGUI; } }
+	private bool isMouseOverGUI = false;
 
 	void Start()
 	{
@@ -104,7 +106,7 @@ public class Menus : MonoBehaviour
 			_activeMenu = Menu.None;
 		else
 		{
-			saveFilesList = GetSaveFiles();
+			saveFilesList = GameManager.GetSaveFiles();
 			_activeMenu = Menu.LoadGame;
 		}
 	}
@@ -115,36 +117,12 @@ public class Menus : MonoBehaviour
 
 		GUI.Label(new Rect(0, 0, 200, 20), "Enter save name:");
 		saveGameFileName = GUI.TextField(new Rect(0, 25, 200, 20), saveGameFileName);
-		if(GUI.Button(new Rect(0, 50, 80, 20), "Save"))
-			SaveGame(saveGameFileName);
+		if(GUI.Button(new Rect(0, 50, 80, 20), "Save") && isMouseOverGUI)
+		{
+			GameManager.Instance.SaveGame(saveGameFileName);
+			CloseAllMenus();
+		}
 		GUI.EndGroup();
-	}
-
-	void SaveGame (string saveGameName)
-	{
-		try
-		{
-			GridManager gm = GridManager.Instance;
-			Transform HexGrid = GameObject.Find("HexGrid").transform;
-			using(StreamWriter sw = new StreamWriter(GetApplicationPath() + SAVEFILEFOLDER + saveGameName, false))
-			{
-				sw.WriteLine("{0}, {1}", gm.gridWidthInHexes, gm.gridHeightInHexes);
-				Transform child = null;
-				HexTile tileInfo = null;
-				for(int i = 0; i < HexGrid.childCount; i++)
-				{
-					child = HexGrid.GetChild(i);
-					tileInfo = (HexTile)child.GetComponent(typeof(HexTile));
-					sw.WriteLine("{0};{1}", child.position, (int)tileInfo.tileType);
-				}
-			}
-		}
-		catch (IOException ex)
-		{
-			Debug.LogError("Error while saving file: " + ex.Message);
-		}
-
-		CloseAllMenus();
 	}
 
 	void ShowLoadGameMenu()
@@ -160,7 +138,10 @@ public class Menus : MonoBehaviour
 		{
 			buttonTop += buttonHeight + 5;
 			if(GUI.Button(new Rect(0, buttonTop, 80, buttonHeight), Path.GetFileName(filePath)))
+			{
 				GameManager.Instance.LoadGame(filePath);
+				CloseAllMenus();
+			}
 		}
 
 		GUI.EndGroup();
@@ -172,6 +153,13 @@ public class Menus : MonoBehaviour
 
 		GUI.Label(new Rect(0, 0, 300, 20), "Type: " + currentSelectedHex.tileType);
 
+		int top = 25;
+		foreach(IAction action in currentSelectedHex.Actions)
+		{
+			if(GUI.Button(new Rect(0, top, 80, 20), action.ActionName))
+				action.Execute(currentSelectedHex);
+			top += 25;
+		}
 		GUI.EndGroup();
 	}
 
@@ -184,39 +172,6 @@ public class Menus : MonoBehaviour
 		newRect.height = height;
 
 		return newRect;
-	}
-
-	private static string[] GetSaveFiles()
-	{
-		string saveFileDirectoryPath = GetApplicationPath() + SAVEFILEFOLDER;
-		string[] saveFiles = new string[]{};
-
-		try
-		{
-			if(Directory.Exists(saveFileDirectoryPath) == false)
-				Directory.CreateDirectory(saveFileDirectoryPath);
-
-			saveFiles = Directory.GetFiles(saveFileDirectoryPath);
-		}
-		catch (IOException ex)
-		{
-			//Handle error lol
-			Debug.LogError("Error while loading savefiles: " + ex.Message);
-		}
-
-		return saveFiles;
-	}
-
-	public static string GetApplicationPath()
-	{
-		string path = Application.dataPath;
-		if (Application.platform == RuntimePlatform.OSXPlayer) {
-			path += "/../../";
-		}
-		else if (Application.platform == RuntimePlatform.WindowsPlayer) {
-			path += "/../";
-		}
-		return path;
 	}
 
 	void CloseAllMenus ()
