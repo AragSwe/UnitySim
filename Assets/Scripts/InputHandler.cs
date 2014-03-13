@@ -21,8 +21,18 @@ public class InputHandler : MonoBehaviour
 				Menus.Instance.ToggleMainMenu();
 		}
 
+		if(Input.GetKeyDown(KeyCode.F2))
+		{
+			ConfigurationManager.Instance.SaveDefaultConfigurations();
+		}
+
+		if(Input.GetKeyDown(KeyCode.F3))
+		{
+			ConfigurationManager.Instance.ReloadConfigurations();
+		}
+
 		if(Menus.Instance.IsMouseOverGUI)
-				GridManager.Instance.HoverHex(null);
+			GridManager.Instance.HoverHex(null); //stop hovering if we are above UI elements
 		else
 		{
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);

@@ -11,6 +11,14 @@ public class HexTile : MonoBehaviour
 		Mountain,
 		Water
 	}
+
+	public enum ResourceType
+	{
+		Wood,
+		Stone,
+		Water,
+		Grain
+	}
 	
 	public TileType tileType;
 	public IList<IAction> Actions
@@ -21,7 +29,7 @@ public class HexTile : MonoBehaviour
 	// Use this for initialization
 	void Start () {
 		if(tileType == TileType.None)
-			SetTileType((TileType)Random.Range(2, 5));
+			SetTileType((TileType)Random.Range(1, 4));
 	}
 	
 	// Update is called once per frame
@@ -47,5 +55,10 @@ public class HexTile : MonoBehaviour
 	IList<IAction> GetActions ()
 	{
 		return new List<IAction> { new StakeClaim() };
+	}
+
+	IDictionary<ResourceType, int> GenerateResources()
+	{
+		return new Dictionary<ResourceType, int>();
 	}
 }

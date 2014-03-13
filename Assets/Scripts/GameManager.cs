@@ -10,7 +10,6 @@ public class GameManager : MonoBehaviour
 	}
 	private static GameManager _instance = null;
 	private const string SAVEFILEFOLDER = "/saves/";
-	private string saveGameFileName = "";
 
 	// Use this for initialization
 	void Start ()

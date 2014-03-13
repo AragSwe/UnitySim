@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfResourceType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ResourceType>
+    <UniqueName>wood</UniqueName>
+    <FriendlyName>Chopped wood</FriendlyName>
+  </ResourceType>
+  <ResourceType>
+    <UniqueName>water</UniqueName>
+    <FriendlyName>Fresh water</FriendlyName>
+  </ResourceType>
+  <ResourceType>
+    <UniqueName>fish</UniqueName>
+    <FriendlyName>Food (fish)</FriendlyName>
+  </ResourceType>
+  <ResourceType>
+    <UniqueName>grain</UniqueName>
+    <FriendlyName>Food (grain)</FriendlyName>
+  </ResourceType>
+  <ResourceType>
+    <UniqueName>berry</UniqueName>
+    <FriendlyName>Food (berries)</FriendlyName>
+  </ResourceType>
+  <ResourceType>
+    <UniqueName>stone</UniqueName>
+    <FriendlyName>Cut stone</FriendlyName>
+  </ResourceType>
+</ArrayOfResourceType>

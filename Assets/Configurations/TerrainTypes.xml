@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfTerrainType xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TerrainType>
+    <UniqueName>woods</UniqueName>
+    <FriendlyName>Forest</FriendlyName>
+    <Resources>
+      <Resource>
+        <ResourceName>wood</ResourceName>
+        <BaseModifier>1</BaseModifier>
+      </Resource>
+    </Resources>
+  </TerrainType>
+  <TerrainType>
+    <UniqueName>plains</UniqueName>
+    <FriendlyName>Plains</FriendlyName>
+    <Resources>
+      <Resource>
+        <ResourceName>berry</ResourceName>
+        <BaseModifier>0.3</BaseModifier>
+      </Resource>
+    </Resources>
+  </TerrainType>
+  <TerrainType>
+    <UniqueName>mountains</UniqueName>
+    <FriendlyName>Mountains</FriendlyName>
+    <Resources>
+      <Resource>
+        <ResourceName>stone</ResourceName>
+        <BaseModifier>0.8</BaseModifier>
+      </Resource>
+    </Resources>
+  </TerrainType>
+  <TerrainType>
+    <UniqueName>water</UniqueName>
+    <FriendlyName>Rivers</FriendlyName>
+    <Resources>
+      <Resource>
+        <ResourceName>water</ResourceName>
+        <BaseModifier>1</BaseModifier>
+      </Resource>
+      <Resource>
+        <ResourceName>fish</ResourceName>
+        <BaseModifier>0.4</BaseModifier>
+      </Resource>
+    </Resources>
+  </TerrainType>
+</ArrayOfTerrainType>

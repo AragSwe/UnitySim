@@ -1,0 +1,28 @@
+###################################
+# Format:
+# <Terrain name="uniquename" friendlyName="Friendly Name">
+# <Resource name="existinguniquename" quantity="quantity modifier"
+###################################
+<TerrainTypes>
+  <Terrain name="woods" friendlyName="Forest">
+    <Resources>
+      <Resource name="wood" quantity="1" />
+    </Resources>
+  </Terrain>
+  <Terrain name="plains" friendlyName="Plains">
+    <Resources>
+      <Resource name="berries" quantity="0.3" />
+    </Resources>
+  </Terrain>
+  <Terrain name="mountains" friendlyName="Mountains">
+    <Resources>
+      <Resource name="stone" quantity="0.6" />
+    </Resources>
+  </Terrain>
+  <Terrain name="water" friendlyName="Rivers">
+    <Resources>
+      <Resource name="fish" quantity="0.4" />
+      <Resource name="water" quantity="1" />
+    </Resources>
+  </Terrain>
+</TerrainTypes>

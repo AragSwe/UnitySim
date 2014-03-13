@@ -163,7 +163,6 @@ public class Menus : MonoBehaviour
 			if(CreateButton(new Rect(0, top, 80, 20), action.ActionName))
 			{
 				action.Execute(currentSelectedHex);
-				Debug.Log(lastToolTip);
 			}
 			top += 25;
 		}

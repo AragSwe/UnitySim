@@ -1,0 +1,12 @@
+######################
+# Format:
+# <Resource name="uniqueidentifier">Friendly name</Resource>
+######################
+<Resouces>
+  <Resource name="wood">Chopped Wood</Resource>
+  <Resource name="water">Fresh water</Resource>
+  <Resource name="fish">Food (fish)</Resource>
+  <Resource name="grain">Food (grain)</Resource>
+  <Resource name="berry">Food (berries)</Resource>
+  <Resource name="stone">Cut stone</Resource>
+</Resources>
