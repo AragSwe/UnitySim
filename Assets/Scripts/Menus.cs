@@ -161,7 +161,7 @@ public class Menus : MonoBehaviour
 		{
 			if(CreateButton(new Rect(0, top, 80, 20), action.ActionName))
 			{
-				action.Execute(currentSelectedHex);
+				action.Execute(GameManager.Instance.CurrentPlayer.Name, currentSelectedHex);
 			}
 			top += 25;
 		}

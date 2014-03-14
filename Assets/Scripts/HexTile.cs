@@ -9,16 +9,29 @@ public class HexTile : MonoBehaviour
 	{
 		get { return GetActions(); }
 	}
+
+	public string PlayerOwner
+	{
+		get { return _playerOwner; }
+	}
+	private string _playerOwner = "";
 	
 	// Use this for initialization
 	void Start () {
 		if(terrainType == null)
 			SetTileType(Utility.RandomValue(ConfigurationManager.Instance.TerrainTypes).UniqueName);
+
+		GameManager.Instance.TimerTick += new GameManager.TimerTickHandler(TimerTick);
+	}
+
+	void TimerTick ()
+	{
+		GenerateResources();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
+		// Use TimerTick instead
 	}
 
 	public void SetTileType(string newType)
@@ -36,16 +49,27 @@ public class HexTile : MonoBehaviour
 		renderer.material.SetColor("_Color", c);
 	}
 
-	IList<IAction> GetActions ()
+	public void SetPlayerOwner(string playerName)
 	{
-		return new List<IAction> { new StakeClaim() };
+		_playerOwner = playerName;
 	}
 
-	IDictionary<ResourceType, float> GenerateResources()
+	IList<IAction> GetActions ()
 	{
-		Dictionary<ResourceType, float> di = new Dictionary<ResourceType, float>();
-		terrainType.Resources.ForEach( res => di.Add(ConfigurationManager.Instance.ResourceTypes[res.ResourceName], res.BaseModifier));
+		if(terrainType.UniqueName != "water")
+			return new List<IAction> { new StakeClaim() };
+		return new List<IAction>();
+	}
 
-		return di;
+	void GenerateResources()
+	{
+		Player p = null;
+		if(_playerOwner != "")
+			p = GameManager.Instance.GetPlayerByName(_playerOwner);
+
+		if(p != null)
+		{
+			terrainType.Resources.ForEach( res => p.AddResource(res.ResourceName, res.BaseModifier) );
+		}
 	}
 }

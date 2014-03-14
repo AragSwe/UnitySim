@@ -18,9 +18,10 @@ public class StakeClaim : IAction
 	{
 	}
 
-	public void Execute(HexTile target)
+	public void Execute(string playerName, HexTile target)
 	{
 		target.renderer.material.SetColor("_Color", Color.red);
+		target.SetPlayerOwner(playerName);
 	}
 }
 

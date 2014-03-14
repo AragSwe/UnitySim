@@ -3,8 +3,6 @@ using System.Collections;
 
 public class InputHandler : MonoBehaviour
 {
-	private bool isMouseOverGUI = false;
-
 	// Use this for initialization
 	void Start () {
 	

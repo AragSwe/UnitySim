@@ -10,7 +10,27 @@ public class GameManager : MonoBehaviour
 	}
 	private static GameManager _instance = null;
 	private const string SAVEFILEFOLDER = "/saves/";
+	public int TimerSpeed = 1; // How many ticks/second
+	private float _timerLength = 0;
+	private float _timer = 0;
 
+	public delegate void TimerTickHandler();
+	public event TimerTickHandler TimerTick;
+	
+	public Player CurrentPlayer
+	{
+		get { return _players[_currentPlayerIndex]; }
+	}
+	private List<Player> _players = new List<Player>();
+	int _currentPlayerIndex = 0;
+
+	public Player GetPlayerByName(string name)
+	{
+		foreach(Player p in _players)
+			if(p.Name == name)
+				return p;
+		return null;
+	}
 	// Use this for initialization
 	void Start ()
 	{
@@ -19,12 +39,34 @@ public class GameManager : MonoBehaviour
 
 		if(Directory.Exists(GameManager.GetApplicationPath() + SAVEFILEFOLDER) == false)
 			Directory.CreateDirectory(GameManager.GetApplicationPath() + SAVEFILEFOLDER);
+
+		// add players
+		_players.Add(new Player("Micke"));
+
+		SetTimerSpeed(TimerSpeed);
+		TimerTick += new TimerTickHandler(TimerTickMethod);
+	}
+
+	void TimerTickMethod ()
+	{
+
 	}
 	
 	// Update is called once per frame
 	void Update ()
 	{
-		
+		_timer -= Time.deltaTime;
+		if(_timer <= 0)
+		{
+			if(TimerTick != null)
+				TimerTick();
+			_timer = _timerLength;
+		}
+	}
+
+	public void SetTimerSpeed(int speed)
+	{
+		_timerLength = 1f/speed;
 	}
 
 	public void LoadGame(string filePath)
@@ -33,7 +75,6 @@ public class GameManager : MonoBehaviour
 		{
 			GridManager gm = GameObject.Find("GridManager").GetComponent(typeof(GridManager)) as GridManager;
 			Dictionary<Vector3, string> hexes = new Dictionary<Vector3, string>();
-			HexTile tempHex = null;
 
 			foreach(string s in File.ReadAllLines(filePath))
 			{

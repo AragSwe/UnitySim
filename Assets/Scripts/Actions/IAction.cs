@@ -13,6 +13,6 @@ using UnityEngine;
 public interface IAction
 {
 	string ActionName { get; }
-	void Execute(HexTile target);
+	void Execute(string playerName, HexTile target);
 }
 
