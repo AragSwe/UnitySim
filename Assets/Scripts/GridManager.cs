@@ -61,34 +61,30 @@ public class GridManager : MonoBehaviour
     }
 	
 	//Finally the method which initialises and positions all the tiles
-	void createGrid(Dictionary<Vector3, string> hexGridInfo)
+	void createGrid(Dictionary<string, string> hexGridInfo)
     {
         //Game object which is the parent of all the hex tiles
         GameObject hexGridGO = new GameObject("HexGrid");
 
 		if(hexGridInfo == null)
-		{
-			hexGridInfo = new Dictionary<Vector3, string>();
-	        for (float y = 0; y < gridHeightInHexes; y++)
-	        {
-	            for (float x = 0; x < gridWidthInHexes; x++)
-	            {
-	                //GameObject assigned to Hex public variable is cloned
-	                //Current position in grid
-	                Vector2 gridPos = new Vector2(x, y);
-					hexGridInfo.Add(calcWorldCoord(gridPos), "");
-	            }
-	        }
-		}
+			hexGridInfo = new Dictionary<string, string>();
 
-		foreach(KeyValuePair<Vector3, string> newHexInfo in hexGridInfo)
-		{
-        	GameObject hex = (GameObject)Instantiate(Hex);
-			hex.transform.position = newHexInfo.Key;
-			hex.transform.parent = hexGridGO.transform;
-			if(newHexInfo.Value != "")
-				((HexTile)hex.GetComponent(typeof(HexTile))).SetTileType(newHexInfo.Value);
-		}
+		string hexType = "";
+        for (float y = 0; y < gridHeightInHexes; y++)
+        {
+            for (float x = 0; x < gridWidthInHexes; x++)
+            {
+                //GameObject assigned to Hex public variable is cloned
+                //Current position in grid
+                Vector2 gridPos = new Vector2(x, y);
+        		GameObject hex = (GameObject)Instantiate(Hex);
+				hex.transform.position = calcWorldCoord(gridPos);
+				hex.transform.parent = hexGridGO.transform;
+				hex.name = "h" + x + "," + y;
+				if(hexGridInfo.TryGetValue(hex.name, out hexType))
+					((HexTile)hex.GetComponent(typeof(HexTile))).SetTileType(hexType);
+            }
+        }
     }
 
     //The grid should be generated on game start
@@ -105,7 +101,7 @@ public class GridManager : MonoBehaviour
 		RecreateWorld(null);
 	}
 
-	public void RecreateWorld(Dictionary<Vector3, string> hexGridInfo)
+	public void RecreateWorld(Dictionary<string, string> hexGridInfo)
 	{
 		GameObject HexGrid = GameObject.Find("HexGrid");
 		if(HexGrid != null)
