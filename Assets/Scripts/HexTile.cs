@@ -10,11 +10,11 @@ public class HexTile : MonoBehaviour
 		get { return GetActions(); }
 	}
 
-	public string PlayerOwner
+	public Player PlayerOwner
 	{
 		get { return _playerOwner; }
 	}
-	private string _playerOwner = "";
+	private Player _playerOwner = null;
 	
 	// Use this for initialization
 	void Start () {
@@ -41,17 +41,28 @@ public class HexTile : MonoBehaviour
 		Color c = Color.black;
 		switch(newType)
 		{
-		case "mountain": c = Color.grey; break;
+		case "mountains": c = Color.gray; break;
 		case "plains": c = Color.green; break;
 		case "woods": c = Color.yellow; break;
 		case "water": c = Color.blue; break;
 		}
-		renderer.material.SetColor("_Color", c);
+		renderer.materials[1].SetColor("_Color", c);
 	}
 
 	public void SetPlayerOwner(string playerName)
 	{
-		_playerOwner = playerName;
+		Player player = GameManager.Instance.GetPlayerByName(playerName);
+		_playerOwner = player;
+		renderer.materials[0].SetColor("_Color", player.OwnerColor);
+	}
+
+	public void ResetColors()
+	{
+		SetTileType(terrainType.UniqueName);
+		if(_playerOwner != null)
+			renderer.materials[0].SetColor("_Color", _playerOwner.OwnerColor);
+		else
+			renderer.materials[0].SetColor("_Color", Color.black);
 	}
 
 	IList<IAction> GetActions ()
@@ -63,13 +74,9 @@ public class HexTile : MonoBehaviour
 
 	void GenerateResources()
 	{
-		Player p = null;
-		if(_playerOwner != "")
-			p = GameManager.Instance.GetPlayerByName(_playerOwner);
-
-		if(p != null)
+		if(_playerOwner != null)
 		{
-			terrainType.Resources.ForEach( res => p.AddResource(res.ResourceName, res.BaseModifier) );
+			terrainType.Resources.ForEach( res => _playerOwner.AddResource(res.ResourceName, res.BaseModifier) );
 		}
 	}
 }

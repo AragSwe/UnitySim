@@ -14,6 +14,12 @@ public class Player
 		_name = name;
 	}
 
+	public HexTile Capital
+	{
+		get
+		{ return _capital;}
+	}
+
 	public Dictionary<string, float> ResourceAmounts
 	{
 		get { return _resourceAmounts; }
@@ -24,7 +30,8 @@ public class Player
 	{
 		get { return _color; }
 	}
-	private Color _color = new Color(Random.Range(0, 255), Random.Range(0, 255), Random.Range(0, 255));
+	private Color _color = Utility.GeneratePlayerColor();
+
 	HexTile _capital = null;
 
 	public void AddResource (string resourceName, float amount)

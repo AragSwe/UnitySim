@@ -8,9 +8,12 @@ public class GameManager : MonoBehaviour
 	{
 		get { return _instance; }
 	}
+
+	public int TimerSpeed = 1; // How many ticks/second
+	public int PlayerCount = 10;
+
 	private static GameManager _instance = null;
 	private const string SAVEFILEFOLDER = "/saves/";
-	public int TimerSpeed = 1; // How many ticks/second
 	private float _timerLength = 0;
 	private float _timer = 0;
 
@@ -41,7 +44,17 @@ public class GameManager : MonoBehaviour
 			Directory.CreateDirectory(GameManager.GetApplicationPath() + SAVEFILEFOLDER);
 
 		// add players
-		_players.Add(new Player("Micke"));
+		for(int i = 0; i < PlayerCount; i++)
+		{
+			_players.Add(new Player(Utility.GeneratePlayerName()));
+			_players[i].SetCapital(
+				GridManager.Instance.GetTileByIndex(
+					Random.Range(1, GridManager.Instance.gridWidthInHexes),
+					Random.Range(1, GridManager.Instance.gridHeightInHexes)
+				)
+			);
+			//Debug.Log(string.Format("Name: {0}. Capital: {1}", _players[i].Name, _players[i].Capital.name));
+		}
 		//_players[0].SetCapital(
 
 		SetTimerSpeed(TimerSpeed);

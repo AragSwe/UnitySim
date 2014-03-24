@@ -9,7 +9,8 @@ public class Menus : MonoBehaviour
 		None,
 		Main,
 		SaveGame,
-		LoadGame
+		LoadGame,
+		LoadingGame
 	}
 
 	public static Menus Instance
@@ -26,6 +27,8 @@ public class Menus : MonoBehaviour
 	private string[] saveFilesList = new string[]{};
 	private string saveGameFileName = "";
 
+	public GUISkin guiSkin = null;
+
 	public bool IsMouseOverGUI { get { return lastToolTip != ""; } }
 	private string lastToolTip = "";
 
@@ -39,6 +42,10 @@ public class Menus : MonoBehaviour
 
 	void OnGUI()
 	{
+		GUI.skin = guiSkin;
+
+		DrawOwnPlayerInfo();
+
 		switch(_activeMenu)
 		{
 		case Menu.Main:
@@ -49,6 +56,9 @@ public class Menus : MonoBehaviour
 			break;
 		case Menu.SaveGame:
 			ShowSaveGameMenu();
+			break;
+		case Menu.LoadingGame:
+			ShowLoadingMenu();
 			break;
 		default:
 			break;
@@ -80,6 +90,7 @@ public class Menus : MonoBehaviour
 
 	void ShowMainMenu ()
 	{
+		GUIStyle s = new GUIStyle();
 		GUI.BeginGroup(CreateCenterRect(100, 200));
 		if(CreateButton(new Rect(0, 0, 80, 20), "New Game"))
 		{
@@ -112,6 +123,22 @@ public class Menus : MonoBehaviour
 			saveFilesList = GameManager.GetSaveFiles();
 			_activeMenu = Menu.LoadGame;
 		}
+	}
+
+	public void ToggleLoadingMenu()
+	{
+		CloseAllMenus();
+		_activeMenu = Menu.LoadingGame;
+	}
+
+	void DrawOwnPlayerInfo ()
+	{
+		GUI.BeginGroup(new Rect(10, 10, Screen.width, 120));
+
+		GUI.Label(new Rect(0, 0, 500, 20), "You are: " + GameManager.Instance.CurrentPlayer.Name);
+		if(GUI.Button(new Rect(0, 25, 80, 20), "Capital"))
+			GridManager.Instance.ZoomToCapital(GameManager.Instance.CurrentPlayer);
+		GUI.EndGroup();
 	}
 
 	void ShowSaveGameMenu()
@@ -150,13 +177,23 @@ public class Menus : MonoBehaviour
 		GUI.EndGroup();
 	}
 
+	void ShowLoadingMenu()
+	{
+		GUI.HorizontalSlider (CreateCenterRect(200, 20), 40f, 0.0f, 10.0f);
+	}
+
 	void ShowHexInfo (HexTile currentSelectedHex)
 	{
 		GUI.BeginGroup(new Rect(Screen.width - 305, 20, 300, 500));
 
 		GUI.Label(new Rect(0, 0, 300, 20), "Type: " + currentSelectedHex.terrainType.FriendlyName);
 
-		int top = 25;
+		if(currentSelectedHex.PlayerOwner != null)
+			GUI.Label(new Rect(0, 25, 300, 20), "Owned by: " + currentSelectedHex.PlayerOwner.Name);
+		else
+			GUI.Label(new Rect(0, 25, 300, 20), "Owned by: noone");
+
+		int top = 50;
 		foreach(IAction action in currentSelectedHex.Actions)
 		{
 			if(CreateButton(new Rect(0, top, 80, 20), action.ActionName))

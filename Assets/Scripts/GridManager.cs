@@ -20,6 +20,7 @@ public class GridManager : MonoBehaviour
     private float hexHeight;
 
 	private Transform currentHoverHex = null;
+	private GameObject hexGridGO = null;
 
 	public Transform CurrentSelectedHex { get { return currentSelectedHex; } }
 	private Transform currentSelectedHex = null;
@@ -64,11 +65,13 @@ public class GridManager : MonoBehaviour
 	void createGrid(Dictionary<string, string> hexGridInfo)
     {
         //Game object which is the parent of all the hex tiles
-        GameObject hexGridGO = new GameObject("HexGrid");
+        hexGridGO = new GameObject("HexGrid");
 
 		if(hexGridInfo == null)
 			hexGridInfo = new Dictionary<string, string>();
 
+		if(Menus.Instance != null)
+			Menus.Instance.ToggleLoadingMenu();
 		string hexType = "";
         for (float y = 0; y < gridHeightInHexes; y++)
         {
@@ -103,9 +106,11 @@ public class GridManager : MonoBehaviour
 
 	public void RecreateWorld(Dictionary<string, string> hexGridInfo)
 	{
-		GameObject HexGrid = GameObject.Find("HexGrid");
-		if(HexGrid != null)
-			Destroy(HexGrid);
+		if(hexGridGO != null)
+		{
+			Destroy(hexGridGO);
+			hexGridGO = null;
+		}
 
 		setSizes();
 		createGrid(hexGridInfo);
@@ -132,6 +137,7 @@ public class GridManager : MonoBehaviour
 			if(currentSelectedHex != null)
 				ResetHexColors(currentSelectedHex);
 			currentSelectedHex = selectedHex;
+			currentSelectedHex.renderer.material.SetColor("_Color", Color.white);
 		}
 	}
 
@@ -145,6 +151,21 @@ public class GridManager : MonoBehaviour
 	private void ResetHexColors(Transform t)
 	{
 		HexTile ht = (HexTile)t.GetComponent(typeof(HexTile));
-		ht.SetTileType(ht.terrainType.UniqueName);
+		ht.ResetColors();
+	}
+
+	public HexTile GetTileByIndex(int x, int y)
+	{
+		if(hexGridGO == null)
+			return null;
+
+		return hexGridGO.transform.FindChild("h" + x + "," + y).GetComponent<HexTile>();
+	}
+
+	public void ZoomToCapital (Player p)
+	{
+		Camera.main.transform.position = p.Capital.transform.position;
+		Camera.main.transform.Translate(new Vector3(0, 0, -20), Space.Self);
+		SelectHex(p.Capital.transform);
 	}
 }

@@ -29,5 +29,16 @@ public class Utility
 			yield return values[UnityEngine.Random.Range(0, size)];
 		}
 	}
+
+	public static string GeneratePlayerName()
+	{
+		return "player" + UnityEngine.Random.Range(1, 1000);
+	}
+
+	public static Color GeneratePlayerColor()
+	{
+		Color c = new Color(UnityEngine.Random.Range(0, 255)/255f, UnityEngine.Random.Range(0, 255)/255f, UnityEngine.Random.Range(0, 255)/255f);
+		return c;
+	}
 }
 
