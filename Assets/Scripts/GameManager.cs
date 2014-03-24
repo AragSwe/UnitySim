@@ -42,6 +42,7 @@ public class GameManager : MonoBehaviour
 
 		// add players
 		_players.Add(new Player("Micke"));
+		//_players[0].SetCapital(
 
 		SetTimerSpeed(TimerSpeed);
 		TimerTick += new TimerTickHandler(TimerTickMethod);
@@ -74,13 +75,13 @@ public class GameManager : MonoBehaviour
 		try
 		{
 			GridManager gm = GameObject.Find("GridManager").GetComponent(typeof(GridManager)) as GridManager;
-			Dictionary<Vector3, string> hexes = new Dictionary<Vector3, string>();
+			Dictionary<string, string> hexes = new Dictionary<string, string>();
 
 			foreach(string s in File.ReadAllLines(filePath))
 			{
 				if(s.Contains(";"))
 				{
-					hexes.Add(stringToVector3(s.Substring(0, s.IndexOf(";"))), s.Substring(s.IndexOf(";") + 1));
+					hexes.Add(s.Substring(0, s.IndexOf(";")), s.Substring(s.IndexOf(";") + 1));
 				}
 				else
 				{
@@ -112,7 +113,7 @@ public class GameManager : MonoBehaviour
 				{
 					child = HexGrid.GetChild(i);
 					tileInfo = (HexTile)child.GetComponent(typeof(HexTile));
-					sw.WriteLine("{0};{1}", child.position, tileInfo.terrainType.UniqueName);
+					sw.WriteLine("{0};{1}", child.name, tileInfo.terrainType.UniqueName);
 				}
 			}
 		}
