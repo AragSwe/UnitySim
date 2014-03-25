@@ -72,6 +72,7 @@ public class GridManager : MonoBehaviour
 
 		if(Menus.Instance != null)
 			Menus.Instance.ToggleLoadingMenu();
+
 		string hexType = "";
         for (float y = 0; y < gridHeightInHexes; y++)
         {
@@ -87,7 +88,21 @@ public class GridManager : MonoBehaviour
 				if(hexGridInfo.TryGetValue(hex.name, out hexType))
 					((HexTile)hex.GetComponent(typeof(HexTile))).SetTileType(hexType);
             }
-        }
+		}
+
+		MeshFilter[] meshFilters = hexGridGO.GetComponentsInChildren<MeshFilter>();
+		CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+		for (var i = 0; i < meshFilters.Length; i++){
+			combine[i].mesh = meshFilters[i].mesh;
+			combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+			meshFilters[i].gameObject.active = false;
+		}
+		hexGridGO.AddComponent<MeshFilter>();
+		hexGridGO.AddComponent<MeshRenderer>();
+		hexGridGO.renderer.sharedMaterials = meshFilters[0].renderer.sharedMaterials;
+		hexGridGO.transform.GetComponent<MeshFilter>().mesh = new Mesh();
+		hexGridGO.transform.GetComponent<MeshFilter>().mesh.CombineMeshes(combine, true);
+		hexGridGO.active = true;
     }
 
     //The grid should be generated on game start
@@ -138,6 +153,8 @@ public class GridManager : MonoBehaviour
 				ResetHexColors(currentSelectedHex);
 			currentSelectedHex = selectedHex;
 			currentSelectedHex.renderer.material.SetColor("_Color", Color.white);
+
+			Debug.Log(currentSelectedHex.renderer.sharedMaterials.Length);
 		}
 	}
 
